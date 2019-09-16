@@ -14,7 +14,7 @@ include 'core/init.php';
 </head>
 <body>
 <div class="front-img">
-    <img src="assets/images/background.jpg"></img>
+    <img src="assets/images/background.jpg">
 </div>
 
 <div class="wrapper">
@@ -25,14 +25,14 @@ include 'core/init.php';
 
                 <div class="nav-left">
                     <ul>
-                        <li><i class="fa fa-twitter" aria-hidden="true"></i><a href="#">Home</a></li>
-                        <li><a href="#">Despre</a></li>
+                        <li><i class="fa fa-commenting" aria-hidden="true"></i><a href="#">Home</a></li>
+                        <li><a href="#">About</a></li>
                     </ul>
                 </div>
 
                 <div class="nav-right">
                     <ul>
-                        <li><a href="#">Limba</a></li>
+                        <li><a href="#">Language</a></li>
                     </ul>
                 </div>
 
@@ -45,7 +45,7 @@ include 'core/init.php';
     <div class="inner-wrapper">
         <div class="main-container">
             <div class="content-left">
-                <h1>Bine ai venit la Chirip.</h1>
+                <h1>Wellcome to Chirip.</h1>
                 <br/>
                 <p>Un loc unde te conectezi cu prietenii si va povestiti cele mai tari intamplari.</p>
             </div>
