@@ -73,7 +73,7 @@ class User{
         $columns = implode(',', array_keys($fields));
         $values  = ':'. implode(', :', array_keys($fields));
         $sql     = "INSERT INTO {$table} ({$columns}) VALUES ({$values})";
-//        var_dump($sql);
+
         if($stmt = $this->pdo->prepare($sql)){
             foreach($fields as $key => $data){
                 $stmt->bindValue(':'.$key, $data);
@@ -81,6 +81,33 @@ class User{
             $stmt->execute();
             return $this->pdo->lastInsertId();
         }
+    }
+
+    /**
+     * update db
+     * @param $table
+     * @param $user_id
+     * @param array $fields
+     */
+    public function update($table, $user_id, $fields = array()){
+        $columns = '';
+        $i = 1;
+// gets the columns name from the field array
+        foreach($fields as $name => $value){
+            $columns .= "`{$name}` = :{$name}";
+            if($i < count($fields)){
+                $columns .= ', ';
+            }
+            $i++;
+        }
+        $sql = "UPDATE {$table} SET {$columns} WHERE `user_id` = {$user_id}";
+        if($stmt = $this->pdo->prepare($sql)){
+//            bind var
+            foreach($fields as $key => $value){
+                $stmt->bindValue(':'.$key, $value);
+            }
+        }
+        $stmt->execute();
     }
 
     /**
