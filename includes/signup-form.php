@@ -27,7 +27,7 @@ if (isset($_POST['signup'])){
                 $user_id = $getFromU->create('users', array('email'=>$email, 'password' => md5($password), 'screenName' => $screenName, 'profileImage'=> 'assets/images/defaultProfileImage.png', 'profileCover'=>'assets/images/defaultCoverImage.png'));
                 $_SESSION['user_id'] = $user_id;
                  header('Location: includes/signup.php?step=1');
-                 echo $user_id;
+//                 echo $user_id;
 
              }
          }

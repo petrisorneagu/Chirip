@@ -111,6 +111,24 @@ class User{
     }
 
     /**
+     * check if user exists
+     * @param $username
+     * @return bool
+     */
+    public function checkUsername($username){
+        $stmt = $this->pdo->prepare("SELECT `username` FROM `users` WHERE `username ` = :username");
+        $stmt->bindParam(":username", $username, PDO::FETCH_OBJ);
+        $stmt->execute();
+
+        $count = $stmt->rowCount();
+        if($count > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    /**
      * check if email already exists
      * @param $email
      * @return bool
@@ -128,6 +146,12 @@ class User{
         }
     }
 
+    /**
+     * register new user in db
+     * @param $email
+     * @param $screenName
+     * @param $password
+     */
     public function register($email, $screenName, $password){
             $stmt = $this->pdo->prepare("INSERT INTO `users` ('email','password','screenName','profileImage','profileCover') VALUES (:email, :password, :screenName, 'assets/images/defaultProfileImage.png', 'assets/images/defaultCoverImage.png')");
             $stmt->bindParam(':email', $email, PDO::PARAM_STR);
