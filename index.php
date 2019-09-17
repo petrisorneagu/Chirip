@@ -14,7 +14,7 @@ include 'core/init.php';
 </head>
 <body>
 <div class="front-img">
-    <img src="assets/images/background.jpg">
+    <img src="assets/images/lap-coffee.jpg">
 </div>
 
 <div class="wrapper">

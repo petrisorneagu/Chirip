@@ -24,6 +24,8 @@ if (isset($_POST['signup'])){
                  $error = 'Email is already in use.';
              }else{
 //                 create the account
+                 $getFromU->create('users', array('email'=>$email, 'password' => md5($password), 'screenName' => $screenName, 'profileImage'=> 'assets/images/defaultProfileImage.png', 'profileCover'=>'assets/images/defaultCoverImage.png'));
+                 header('Location: includes/signup.php?step=1');
 
              }
          }

@@ -63,17 +63,54 @@ class User{
         header('Location: ../index.php');
     }
 
+    /**
+     * create user & insert it into db
+     * @param $table
+     * @param array $fields
+     * @return mixed
+     */
+    public function create($table, $fields = array()){
+        $columns = implode(',', array_keys($fields));
+        $values  = ':'. implode(', :', array_keys($fields));
+        $sql     = "INSERT INTO {$table} ({$columns}) VALUES ({$values})";
+//        var_dump($sql);
+        if($stmt = $this->pdo->prepare($sql)){
+            foreach($fields as $key => $data){
+                $stmt->bindValue(':'.$key, $data);
+            }
+            $stmt->execute();
+            return $this->pdo->lastInsertId();
+        }
+    }
+
+    /**
+     * check if email already exists
+     * @param $email
+     * @return bool
+     */
     public function checkEmail($email){
-        $stmt = $this->pdo->prepare("SELECT email FROM users WHERE email = :email");
-        $stmt->bindParam(":email", $email, PDO::PARAM_STR);
+        $stmt = $this->pdo->prepare("SELECT `email` FROM `users` WHERE `email ` = :email");
+        $stmt->bindParam(":email", $email, PDO::FETCH_OBJ);
         $stmt->execute();
 
         $count = $stmt->rowCount();
         if($count > 0){
             return true;
         }else{
-            return true;
+            return false;
         }
+    }
+
+    public function register($email, $screenName, $password){
+            $stmt = $this->pdo->prepare("INSERT INTO `users` ('email','password','screenName','profileImage','profileCover') VALUES (:email, :password, :screenName, 'assets/images/defaultProfileImage.png', 'assets/images/defaultCoverImage.png')");
+            $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+            $stmt->bindParam(':password', $password, PDO::PARAM_STR);
+            $stmt->bindParam(':screenName', $screenName, PDO::PARAM_STR);
+            $stmt->execute();
+
+            $user_id = $this->pdo->lastInsertId();
+            $_SESSION['user_id'] = $user_id;
+
     }
 
 }
