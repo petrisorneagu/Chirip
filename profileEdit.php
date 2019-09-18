@@ -1,4 +1,35 @@
 <?php
+include 'core/init.php';
+
+if($getFromU->loggedIn() === false){
+    header('Location: index.php');
+}
+$user_id = $_SESSION['user_id'];
+$user    = $getFromU->userData($user_id);
+
+if(isset($_POST['screenName'])){
+    if(!empty($_POST['screenName'])){
+        $screenName = $getFromU->checkInput($_POST['screenName']);
+        $bio        = $getFromU->checkInput($_POST['bio']);
+        $country    = $getFromU->checkInput($_POST['country']);
+        $website    = $getFromU->checkInput($_POST['website']);
+
+        if(strlen($screenName) > 20){
+            $error = "Name must be between 6-20 characters";
+        }else if(strlen($bio) > 20){
+            $error = "Description is too long characters";
+        }else if(strlen($country) > 20){
+            $error = "Country name is too long";
+        }else{
+//            update the profile
+            $getFromU->update('users', $user_id, array('screenName' => $screenName, 'bio' => $bio, 'country' => $country, 'website'=> $website));
+            header('Location: '.$user->username);
+        }
+    }else{
+        $error = "Name can't be blank";
+    }
+
+}
 
 ?>
 
@@ -30,12 +61,12 @@
                             <div class="search-result">
 
                             </div></li>
-                        <li class="hover"><label class="drop-label" for="drop-wrap1"><img src="PROFILE-IMAGE"/></label>
+                        <li class="hover"><label class="drop-label" for="drop-wrap1"><img src="<?php echo $user->profileImage;?>"/></label>
                             <input type="checkbox" id="drop-wrap1">
                             <div class="drop-wrap">
                                 <div class="drop-inner">
                                     <ul>
-                                        <li><a href="PROFILE-LINK">USERNAME</a></li>
+                                        <li><a href="<?php echo $user->username;?>"><?php echo $user->username;?></a></li>
                                         <li><a href="settings/account">Settings</a></li>
                                         <li><a href="includes/logout.php">Log out</a></li>
                                     </ul>
@@ -52,7 +83,7 @@
     <div class="profile-cover-wrap">
         <div class="profile-cover-inner">
             <div class="profile-cover-img">
-                <img src="PROFILE-COVER"/>
+                <img src="<?php echo $user->profileCover;?>"/>
 
                 <div class="img-upload-button-wrap">
                     <div class="img-upload-button1">
@@ -104,7 +135,7 @@
                                 FOLLOWINGS
                             </div>
                             <div class="n-bottom">
-                                0
+                                <?php echo $user->following;?>
                             </div>
                         </a>
                     </li>
@@ -114,7 +145,7 @@
                                 FOLLOWERS
                             </div>
                             <div class="n-bottom">
-                                0
+                                <?php echo $user->followers;?>
                             </div>
                         </a>
                     </li>
@@ -150,7 +181,7 @@
                     <div class="profile-info-wrap">
                         <div class="profile-info-inner">
                             <div class="profile-img">
-                                <img src="PROFILE-IMAGE"/>
+                                <img src="<?php echo $user->profileImage;?>"/>
                                 <div class="img-upload-button-wrap1">
                                     <div class="img-upload-button">
                                         <label for="img-upload-btn">
@@ -192,15 +223,15 @@
                                          </li>
                                      </ul>  -->
                                     <div class="profile-name">
-                                        <input type="text" name="screenName" value="SCREEN-NAME"/>
+                                        <input type="text" name="screenName" value="<?php echo $user->screenName;?>"/>
                                     </div>
                                     <div class="profile-tname">
-                                        @USERNAME
+                                        @<?php echo $user->username;?>
                                     </div>
                                 </div>
                                 <div class="profile-bio-wrap">
                                     <div class="profile-bio-inner">
-                                        <textarea class="status" name="bio">PROFILE-BIO</textarea>
+                                        <textarea class="status" name="bio" placeholder="Bio"><?php echo $user->bio;?></textarea>
                                         <div class="hash-box">
                                             <ul>
                                             </ul>
@@ -212,15 +243,22 @@
                                         <ul>
                                             <li>
                                                 <div class="profile-ex-location">
-                                                    <input id="cn" type="text" name="country" placeholder="Country" value="COUNTRY" />
+                                                    <input id="cn" type="text" name="country" placeholder="Country" value="<?php echo $user->country;?>" />
                                                 </div>
                                             </li>
                                             <li>
                                                 <div class="profile-ex-location">
-                                                    <input type="text" name="website" placeholder="Website" value="WEBSITE"/>
+                                                    <input type="text" name="website" placeholder="Website" value="<?php echo $user->website;?>"/>
                                                 </div>
                                             </li>
                             </form>
+
+                            <script type="text/javascript">
+                                $('#save').click(function(){
+                                    $('#editForm').submit();
+                                })
+                            </script>
+
                             </ul>
                         </div>
                     </div>
@@ -269,3 +307,9 @@
 </div>
 </body>
 </html>
+
+<script type="text/javascript">
+    $('#save').click(function(){
+        $('#editForm').submit();
+    })
+</script>
