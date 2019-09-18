@@ -147,6 +147,20 @@ class User{
     }
 
     /**
+     * takes the user id related to username
+     * @param $username
+     * @return mixed
+     */
+    public function userIdByUsername($username){
+        $stmt = $this->pdo->prepare("SELECT `user_id` FROM users WHERE `username` = :username");
+        $stmt->bindParam(':username', $username, PDO::PARAM_STR);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_OBJ);
+
+        return $user->user_id;
+    }
+
+    /**
      * register new user in db
      * @param $email
      * @param $screenName
@@ -161,7 +175,6 @@ class User{
 
             $user_id = $this->pdo->lastInsertId();
             $_SESSION['user_id'] = $user_id;
-
     }
 
 }
