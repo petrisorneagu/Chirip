@@ -48,7 +48,7 @@ if(isset($_GET['username']) && !empty($_GET['username'])){
                             </div>
                         </li>
 
-                        <li class="hover"><label class="drop-label" for="drop-wrap1"><img src="<?= BASE_URL. $user->profileImage;?>"/></label>
+                        <li class="hover"><label class="drop-label" for="drop-wrap1"><img src="<?php echo  BASE_URL. $user->profileImage;?>"/></label>
                             <input type="checkbox" id="drop-wrap1">
                             <div class="drop-wrap">
                                 <div class="drop-inner">
