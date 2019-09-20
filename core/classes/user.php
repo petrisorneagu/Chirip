@@ -181,4 +181,29 @@ class User{
             $_SESSION['user_id'] = $user_id;
     }
 
+    public function uploadImage($file){
+        $filename = basename($file['name']);
+        $fileTmp = $file['tmp_name'];
+        $fileSize = $file['size'];
+        $error = $file['error'];
+
+        $ext = explode('.', $filename);
+        $ext = strtolower(end($ext));
+        $allowed_ext = array('jpg', 'jpeg', 'png');
+
+        if(in_array($ext, $allowed_ext)=== true){
+            if($error === 0){
+                if($fileSize <= 2000000 ){
+                    $fileRoot = 'users/'.$filename;
+                    move_uploaded_file($fileTmp, $fileRoot);
+                    return $fileRoot;
+                }else{
+                    $GLOBALS['imageError'] = "The file is too big";
+                }
+            }
+        }else{
+            $GLOBALS['imageError'] = "The extension is not allowed";
+        }
+    }
+
 }
