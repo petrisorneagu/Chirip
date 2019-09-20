@@ -6,9 +6,29 @@ $user = $getFromU->userData($user_id);
 
 if($getFromU->loggedIn() === false){
     header('Location: '.BASE_URL.'index.php');
-
 }
+ if(isset($_POST['submit'])){
+    $username = $getFromU->checkInput($_POST['username']);
+    $email = $getFromU->checkInput($_POST['email']);
+    $error = array();
 
+    if(!empty($username) && !empty($email)){
+        if($user->username != $username && $getFromU->checkUsername($username) === true){
+            $error['username'] = 'The username is not available';
+        }else if(preg_match('/[^a-zA-Z0-9\!]', $username)){
+            $error['username'] = "Only characters & numbers allowed";
+        }else if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+            $error['email'] = 'Email invalid format';
+        }else if($user->email == $email && $getFromU->userData($email) === true){
+            $error['email'] = 'Email already exists';
+        }else{
+            $getFromU->update('users', $user_id, array('username' => $username, 'email'=> $email));
+            header('Location: account.php');
+        }
+    }else{
+        $error['fields'] = 'All fields are required';
+    }
+ }
 ?>
 
 <html>
@@ -26,7 +46,7 @@ if($getFromU->loggedIn() === false){
             <div class="nav">
                 <div class="nav-left">
                     <ul>
-                        <li><a href="#"><i class="fa fa-home" aria-hidden="true"></i>Home</a></li>
+                        <li><a href="home.php"><i class="fa fa-home" aria-hidden="true"></i>Home</a></li>
                         <li><a href="i/notifications"><i class="fa fa-bell" aria-hidden="true"></i>Notification</a></li>
                         <li id="messagePopup" rel="user_id"><i class="fa fa-envelope" aria-hidden="true"></i>Messages</li>
                     </ul>
@@ -39,12 +59,12 @@ if($getFromU->loggedIn() === false){
 
                             </ul>
                         </div>
-                        <li class="hover"><label class="drop-label" for="drop-wrap1"><img src="PROFILE-IMAGE"/></label>
+                        <li class="hover"><label class="drop-label" for="drop-wrap1"><img src="<?= $user->profileImage;?>"/></label>
                             <input type="checkbox" id="drop-wrap1">
                             <div class="drop-wrap">
                                 <div class="drop-inner">
                                     <ul>
-                                        <li><a href="PROFILE-LINK">USERNAME</a></li>
+                                        <li><a href="<?= $user->username;?> "><?= $user->username;?></a></li>
                                         <li><a href="settings/account">Settings</a></li>
                                         <li><a href="includes/logout.php">Log out</a></li>
                                     </ul>
@@ -65,14 +85,14 @@ if($getFromU->loggedIn() === false){
 
                 <div class="acc-info-wrap">
                     <div class="acc-info-bg">
-                        <img src="PROFILE-COVER"/>
+                        <img src="<?=  $user->profileCover;?>"/>
                     </div>
                     <div class="acc-info-img">
-                        <img src="PROFILE-IMAGE"/>
+                        <img src="<?= $user->profileImage;?>"/>
                     </div>
                     <div class="acc-info-name">
-                        <h3>SCREEN-NAME</h3>
-                        <span><a href="PROFILE-LINK">@USERNAME</a></span>
+                        <h3><?= $user->screenName;?></h3>
+                        <span><a href="<?=$user->username;?>">@<?=  $user->username;?></a></span>
                     </div>
                 </div>
 
@@ -114,8 +134,9 @@ if($getFromU->loggedIn() === false){
                                     USERNAME
                                 </div>
                                 <div class="acc-right">
-                                    <input type="text" name="username" value=""/>
+                                    <input type="text" name="username" value="<?= $user->username;?>"/>
                                     <span>
+                                            <?php if(isset($error['username '])) {echo $error['username'];}?>
 								</span>
                                 </div>
                             </div>
@@ -125,8 +146,9 @@ if($getFromU->loggedIn() === false){
                                     Email
                                 </div>
                                 <div class="acc-right">
-                                    <input type="text" name="email" value=""/>
+                                    <input type="text" name="email" value="<?= $user->email;?>"/>
                                     <span>
+                                            <?php if(isset($error['email'])) {echo $error['email'];}?>
 								</span>
                                 </div>
                             </div>
@@ -138,6 +160,7 @@ if($getFromU->loggedIn() === false){
                                     <input type="Submit" name="submit" value="Save changes"/>
                                 </div>
                                 <div class="settings-error">
+                                    <?php if(isset($error['fields'])) {echo $error['fields'];}?>
                                 </div>
                             </div>
                         </form>
