@@ -41,6 +41,7 @@ if($getFromU->loggedIn() === false){
                             <input type="text" placeholder="Search" class="search"/>
                             <i class="fa fa-search" aria-hidden="true"></i>
                             <div class="search-result">
+
                             </div>
                         </li>
 
@@ -65,6 +66,8 @@ if($getFromU->loggedIn() === false){
         </div>
 
     </div>
+
+    <script type="text/javascript" src="assets/js/search.js"></script>
 
     <!---Inner wrapper-->
     <div class="inner-wrapper">
