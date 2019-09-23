@@ -8,6 +8,26 @@ if($getFromU->loggedIn() === false){
     header('Location: index.php');
 }
 
+if(isset($_POST['chirp'])){
+    $status = $getFromU->checkInput($_POST['status']);
+    $chirpImage = '';
+
+    if(!empty($status) || !empty($_FILES['name'][0])){
+//        var_dump($_FILES['name']) ;
+        if(!empty($_FILES['name'][0])){
+            $chirpImage = $getFromU->uploadImage($_FILES['file']);
+        }
+        if(strlen($status) > 200){
+            $error = 'The length of the chirp is too long';
+        }
+//        create the post(chirp)
+        $getFromU->create('chirps', array('status' => $status, 'chirpBy' => $user_id, 'chirpImage' => $chirpImage, 'postedOn' => date('Y-m-d H:i:s' )));
+    }else{
+        $error = 'Type something or choose an image to post';
+    }
+
+}
+
 
 ?>
 
@@ -150,13 +170,16 @@ if($getFromU->loggedIn() === false){
                                         <ul>
                                             <input type="file" name="file" id="file"/>
                                             <li><label for="file"><i class="fa fa-camera" aria-hidden="true"></i></label>
-                                                <span class="tweet-error"></span>
+                                                <span class="tweet-error">
+                                                    <?php if(isset($error)){echo $error;}else if(isset($imageError)){echo $imageError;
+                                                    };?>
+                                                </span>
                                             </li>
                                         </ul>
                                     </div>
                                     <div class="t-fo-right">
                                         <span id="count">140</span>
-                                        <input type="submit" name="tweet" value="chirp"/>
+                                        <input type="submit" name="chirp" value="chirp"/>
                                         </form>
                                     </div>
                                 </div>
