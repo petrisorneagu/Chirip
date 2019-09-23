@@ -21,6 +21,20 @@ class User{
     }
 
     /**
+     * search for username & screenname
+     * @param $search
+     * @return mixed
+     */
+    public function search($search){
+        $stmt = $this->pdo->prepare("SELECT `user_id`, `username`, `screenName`, `profileImage`, `profileCover` FROM `users` WHERE `username` LIKE ? OR `screenName` LIKE ?");
+        $stmt->bindValue(1, $search.'%', PDO::PARAM_STR);
+        $stmt->bindValue(2, $search.'%', PDO::PARAM_STR);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    /**
      * login with user & pass
      * @param $email
      * @param $password
