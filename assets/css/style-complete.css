@@ -1714,7 +1714,7 @@ label{
 	border-radius: 10px;
 	border: 1px solid #e7e7e7;
 	margin: 0px;
-	position: relative;s
+	position: relative;
 }
 
 .profile-img img{
@@ -2220,7 +2220,7 @@ box-shadow: inset 0px 0px 3px;}
 }
  
 
-.follow.:active{
+.follow:active{
 background-image: linear-gradient(#fff,#f5f8fa);
     cursor: pointer;
 }
