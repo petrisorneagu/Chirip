@@ -23,7 +23,7 @@ if(isset($_POST['screenName'])){
         }else{
 //            update the profile
             $getFromU->update('users', $user_id, array('screenName' => $screenName, 'bio' => $bio, 'country' => $country, 'website'=> $website));
-            header('Location: '.$user->username);
+            header('Location: profileEdit.php');
         }
     }else{
         $error = "Name can't be blank";
@@ -35,7 +35,7 @@ if(isset($_FILES['profileImage'])){
     if(!empty($_FILES['profileImage']['name'][0])){
         $fileRoot = $getFromU->uploadImage($_FILES['profileImage']);
         $getFromU->update('users', $user_id, array('profileImage' => $fileRoot));
-        header('Location: '.$user->username);
+        header('Location: profileEdit.php');
     }
 }
 
@@ -43,7 +43,7 @@ if(isset($_FILES['profileCover'])){
     if(!empty($_FILES['profileCover']['name'][0])){
         $fileRoot = $getFromU->uploadImage($_FILES['profileCover']);
         $getFromU->update('users', $user_id, array('profileCover' => $fileRoot));
-        header('Location: '.$user->username);
+        header('Location: profileEdit.php');
     }
 }
 
@@ -82,7 +82,7 @@ if(isset($_FILES['profileCover'])){
                             <div class="drop-wrap">
                                 <div class="drop-inner">
                                     <ul>
-                                        <li><a href="<?php echo $user->username;?>"><?php echo $user->username;?></a></li>
+                                        <li><a href="profileEdit.php"><?php echo $user->username;?></a></li>
                                         <li><a href="settings/account">Settings</a></li>
                                         <li><a href="includes/logout.php">Log out</a></li>
                                     </ul>

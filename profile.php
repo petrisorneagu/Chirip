@@ -9,7 +9,7 @@ if(isset($_GET['username']) && !empty($_GET['username'])){
     $user_id     = $_SESSION['user_id'];
     $user        = $getFromU->userData($user_id);
 
-//    echo $user;
+    echo $user;
 
     if(!$profileData){
         header('Location: index.php');
@@ -36,8 +36,13 @@ if(isset($_GET['username']) && !empty($_GET['username'])){
                 <div class="nav-left">
                     <ul>
                         <li><a href="home.php"><i class="fa fa-home" aria-hidden="true"></i>Home</a></li>
+                        <?php if($getFromU->loggedIn() === true) {
+
+
+                            ?>
                         <li><a href="i/notifications"><i class="fa fa-bell" aria-hidden="true"></i>Notification</a></li>
                         <li><i class="fa fa-envelope" aria-hidden="true"></i>Messages</li>
+                        <?php }     ?>
 
                     </ul>
                 </div>
@@ -47,6 +52,11 @@ if(isset($_GET['username']) && !empty($_GET['username'])){
                             <div class="search-result">
                             </div>
                         </li>
+
+                        <?php if($getFromU->loggedIn() === true) {
+                            $getFromU->loggedIn()
+                            ?>
+
 
                         <li class="hover"><label class="drop-label" for="drop-wrap1"><img src="<?php echo  BASE_URL. $user->profileImage;?>"/></label>
                             <input type="checkbox" id="drop-wrap1">
@@ -61,6 +71,10 @@ if(isset($_GET['username']) && !empty($_GET['username'])){
                             </div>
                         </li>
                         <li><label for="pop-up-tweet" class="addTweetBtn">Chirp</label></li>
+                        <?php }else {
+                            echo '<li><a href="'.BASE_URL.'index.php">Have an account? Log in!</a></li>';
+                        }
+                        ?>
                     </ul>
                 </div>
 

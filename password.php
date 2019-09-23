@@ -6,8 +6,32 @@ $user = $getFromU->userData($user_id);
 
 if($getFromU->loggedIn() === false){
     header('Location: index.php');
-
 }
+
+if(isset($_POST['submit'])){
+    $currentPwd = $_POST['currentPwd'];
+    $newPassword = $_POST['newPassword'];
+    $rePassword = $_POST['rePassword'];
+    $error = array();
+
+    if(!empty($currentPwd) && !empty($newPassword) && !empty($rePassword)){
+        if($getFromU->checkPassword($currentPwd) === true){
+            if(strlen($newPassword) < 4){
+                $error['newPassword'] = 'Password should not be less than 6 characters';
+            }elseif ($newPassword != $rePassword){
+                $error['rePassword'] = 'Password does not match';
+            }else{
+                $getFromU->update('users', $user_id, array('password' => md5($newPassword)));
+                header("Location: password.php");
+            }
+        }else{
+            $error['newPassword'] = 'Password is incorrect';
+        }
+    }else{
+        $error['fields'] = 'All fields are required';
+    }
+}
+
 ?>
 <html>
 <head>
@@ -20,7 +44,6 @@ if($getFromU->loggedIn() === false){
 <body>
 <div class="wrapper">
     <div class="header-wrapper">
-
         <div class="nav-container">
             <div class="nav">
                 <div class="nav-left">
@@ -33,46 +56,52 @@ if($getFromU->loggedIn() === false){
                 <div class="nav-right">
                     <ul>
                         <li><input type="text" placeholder="Search" class="search"/><i class="fa fa-search" aria-hidden="true"></i></li>
-                        <div class="search-result">
+                        <div class="nav-right-down-wrap">
+                            <ul class="search-result">
 
+                            </ul>
                         </div>
-                        <li class="hover"><label class="drop-label" for="drop-wrap1"><img src="PROFILE-IMAGE"/></label>
+                        <li class="hover"><label class="drop-label" for="drop-wrap1"><img src="<?= $user->profileImage;?>"/></label>
                             <input type="checkbox" id="drop-wrap1">
                             <div class="drop-wrap">
                                 <div class="drop-inner">
                                     <ul>
-                                        <li><a href="PROFILE-LINK">USERNAME</a></li>
+                                        <li><a href="<?= $user->username;?> "><?= $user->username;?></a></li>
                                         <li><a href="settings/account">Settings</a></li>
                                         <li><a href="includes/logout.php">Log out</a></li>
                                     </ul>
                                 </div>
                             </div>
                         </li>
-                        <li><label for="pop-up-tweet">Tweet</label></li>
+                        <li><label for="pop-up-tweet" class="addTweetBtn">Chirp</label></li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
+
     <div class="container-wrap">
+
         <div class="lefter">
             <div class="inner-lefter">
+
                 <div class="acc-info-wrap">
                     <div class="acc-info-bg">
-                        <img src="PROFILE-COVER"/>
+                        <img src="<?=  $user->profileCover;?>"/>
                     </div>
                     <div class="acc-info-img">
-                        <img src="PROFILE-IMAGE"/>
+                        <img src="<?= $user->profileImage;?>"/>
                     </div>
                     <div class="acc-info-name">
-                        <h3>SCREEN-NAME</h3>
-                        <span><a href="PROFILE-IMAGE">@USERNAME</a></span>
+                        <h3><?= $user->screenName;?></h3>
+                        <span><a href="<?=$user->username;?>">@<?=  $user->username;?></a></span>
                     </div>
                 </div>
+
                 <div class="option-box">
                     <ul>
                         <li>
-                            <a href="settings/account" class="bold">
+                            <a href="/settings/account" class="bold">
                                 <div>
                                     Account
                                     <span><i class="fa fa-angle-right" aria-hidden="true"></i></span>
@@ -80,7 +109,7 @@ if($getFromU->loggedIn() === false){
                             </a>
                         </li>
                         <li>
-                            <a href="#">
+                            <a href="/settings/password">
                                 <div>
                                     Password
                                     <span><i class="fa fa-angle-right" aria-hidden="true"></i></span>
@@ -109,6 +138,7 @@ if($getFromU->loggedIn() === false){
                                 <div class="acc-right">
                                     <input type="password" name="currentPwd"/>
                                     <span>
+                                         <?php if(isset($error['currentPwd'])) {echo $error['currentPwd'];}?>
 							</span>
                                 </div>
                             </div>
@@ -119,8 +149,9 @@ if($getFromU->loggedIn() === false){
                                 </div>
                                 <div class="acc-right">
                                     <input type="password" name="newPassword" />
-                                    <span>
-							</span>
+                                    <span
+                                    <?php if(isset($error['newPassword'])) {echo $error['newPassword'];}?>
+                                    </span>
                                 </div>
                             </div>
 
@@ -131,6 +162,7 @@ if($getFromU->loggedIn() === false){
                                 <div class="acc-right">
                                     <input type="password" name="rePassword"/>
                                     <span>
+                                        <?php if(isset($error['rePassword'])) {echo $error['rePassword'];}?>
 							</span>
                                 </div>
                             </div>
@@ -141,6 +173,7 @@ if($getFromU->loggedIn() === false){
                                     <input type="Submit" name="submit" value="Save changes"/>
                                 </div>
                                 <div class="settings-error">
+                                    <?php if(isset($error['fields'])) {echo $error['fields'];}?>
                                 </div>
                             </div>
                     </form>

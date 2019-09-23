@@ -117,7 +117,7 @@ class User{
      */
     public function checkUsername($username){
         $stmt = $this->pdo->prepare("SELECT `username` FROM `users` WHERE `username ` = :username");
-        $stmt->bindParam(":username", $username, PDO::FETCH_OBJ);
+        $stmt->bindParam(":username", $username, PDO::PARAM_STR);
         $stmt->execute();
 
         $count = $stmt->rowCount();
@@ -136,6 +136,19 @@ class User{
     public function checkEmail($email){
         $stmt = $this->pdo->prepare("SELECT `email` FROM `users` WHERE `email ` = :email");
         $stmt->bindParam(":email", $email, PDO::FETCH_OBJ);
+        $stmt->execute();
+
+        $count = $stmt->rowCount();
+        if($count > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function checkPassword($password){
+        $stmt = $this->pdo->prepare("SELECT `password` FROM `users` WHERE `password ` = :password");
+        $stmt->bindParam(":password", $password, PDO::PARAM_STR);
         $stmt->execute();
 
         $count = $stmt->rowCount();
