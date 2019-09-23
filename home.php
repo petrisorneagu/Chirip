@@ -13,12 +13,11 @@ if(isset($_POST['chirp'])){
     $chirpImage = '';
 
     if(!empty($status) || !empty($_FILES['name'][0])){
-//        var_dump($_FILES['name']) ;
-        if(!empty($_FILES['name'][0])){
+        if(!empty($_FILES['file']['name'][0])){
             $chirpImage = $getFromU->uploadImage($_FILES['file']);
         }
         if(strlen($status) > 200){
-            $error = 'The length of the chirp is too long';
+            $error = 'The length of your chirp is too long';
         }
 //        create the post(chirp)
         $getFromU->create('chirps', array('status' => $status, 'chirpBy' => $user_id, 'chirpImage' => $chirpImage, 'postedOn' => date('Y-m-d H:i:s' )));
@@ -178,7 +177,7 @@ if(isset($_POST['chirp'])){
                                         </ul>
                                     </div>
                                     <div class="t-fo-right">
-                                        <span id="count">140</span>
+                                        <span id="count">200</span>
                                         <input type="submit" name="chirp" value="chirp"/>
                                         </form>
                                     </div>
@@ -188,6 +187,8 @@ if(isset($_POST['chirp'])){
 
 
                         <div class="tweets">
+
+                            <?php $getFromT->chirps(); ?>
                         </div>
 
                         <div class="loading-div">

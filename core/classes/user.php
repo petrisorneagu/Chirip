@@ -218,7 +218,7 @@ class User{
         $ext = strtolower(end($ext));
         $allowed_ext = array('jpg', 'jpeg', 'png');
 
-        if(in_array($ext, $allowed_ext)=== true){
+        if(in_array($ext, $allowed_ext) === true){
             if($error === 0){
                 if($fileSize <= 2000000 ){
                     $fileRoot = 'users/'.$filename;
