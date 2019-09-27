@@ -7,20 +7,42 @@ $(function(){
         var text = content.match(regex);
         var max = 140;
 
-        if(max != null){
+        if(text != null){
             var dataString = 'hashtag=' + text;
 
             $.ajax({
                 type: "POST",
                 url:  "http://dev.test.com/Chirip/core/ajax/getHashtag.php",
-                // root dependig of your root project
+                // root depending of your project
                 data: dataString,
                 cache: false,
                 success: function(data){
-                        $('.hash-box ul').html(data);
+                    $('.hash-box ul').html(data);
+                    $('.hash-box li').click(function(){
+                        var value = $.trim($(this).find('.getValue').text());
+                        var oldContent = $('.status').val();
+                        var newContent = oldContent.replace(regex, "");
 
+                        $('.status').val(newContent + value + ' ');
+                        $('.hash-box li').hide();
+                        $('.status').focus();
+
+                        $('#count').text(max - content.length);
+                    })
                 }
             })
+        }else{
+            // if textarea is empty
+            $('.hash-box li').hide();
+        }
+
+        $('#count').text(max - content.length);
+
+        if(content.length === max){
+            $('#count').css('color', '#f00');
+        }else{
+            $('#count').css('color', '#000');
+
         }
     });
 });

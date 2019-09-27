@@ -178,7 +178,7 @@ if(isset($_POST['chirp'])){
                                         </ul>
                                     </div>
                                     <div class="t-fo-right">
-                                        <span id="count">200</span>
+                                        <span id="count">140</span>
                                         <input type="submit" name="chirp" value="chirp"/>
                                         </form>
                                     </div>
