@@ -37,7 +37,7 @@ class Tweet extends User{
                             <span>'.$chirp->postedOn.'</span>
                         </div>
                         <div class="t-h-c-dis">     
-                            '.$chirp->status.'
+                            '.$this->getChirpLinks($chirp->status).'
                         </div>
                     </div>
                 </div>';
@@ -106,6 +106,16 @@ class Tweet extends User{
         }
     }
 
+    public function getChirpLinks($chirp){
+//        get link/domain
+        $chirp = preg_replace("/(https?:\/\/)?([\w]+.)([\w\.]+)/", "<a href = '$0' target='_blank'>$0</a>", $chirp);
+//        get hashtag link
+        $chirp = preg_replace("/#([\w]+)/", "<a href='".BASE_URL."hashtag/$1'>$0</a>", $chirp);
+//        get @ link
+        $chirp = preg_replace("/@([\w]+)/", "<a href='".BASE_URL."$1'>$0</a>", $chirp);
+
+        return $chirp;
+    }
+
 }
 
-?>
