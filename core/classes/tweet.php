@@ -76,8 +76,16 @@ class Tweet extends User{
     }
 
     public function getTrendByHash($hashtag){
-        $stmt = $this->pdo->prepare("SELECT * FROM trends WHERE hashtag LIKE :hashtag");
+        $stmt = $this->pdo->prepare("SELECT * FROM trends WHERE hashtag LIKE :hashtag LIMIT 5");
         $stmt->bindValue(':hashtag', $hashtag.'%');
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public function getMention($username){
+        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE username LIKE :username OR screenName LIKE :username LIMIT 5");
+        $stmt->bindValue(':username', $username.'%');
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_OBJ);
