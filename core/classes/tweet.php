@@ -91,7 +91,20 @@ class Tweet extends User{
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
+    public function addTrend($hashtag){
+        preg_match_all('/#+([a-zA-Z0-9_]+)/i', $hashtag, $matches);
 
+        if($matches){
+            $result = array_values($matches[1]);
+        }
+        $sql = "INSERT INTO `trends` (`hashtag`, `createdOn`) VALUES (:hashtag , CURRENT_TIMESTAMP)";
+
+        foreach($result as $trend){
+            if($stmt = $this->pdo->prepare($sql)){
+                $stmt->execute(array(':hashtag' => $trend));
+            }
+        }
+    }
 
 }
 

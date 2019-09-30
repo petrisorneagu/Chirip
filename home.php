@@ -21,6 +21,12 @@ if(isset($_POST['chirp'])){
         }
 //        create the post(chirp)
         $getFromU->create('chirps', array('status' => $status, 'chirpBy' => $user_id, 'chirpImage' => $chirpImage, 'postedOn' => date('Y-m-d H:i:s' )));
+
+        preg_match_all('/#+([a-zA-Z0-9_]+)/i', $status, $hashtag);
+        if(!empty($hashtag)){
+            $getFromT->addTrend($status);
+        }
+
     }else{
         $error = 'Type something or choose an image to post';
     }
