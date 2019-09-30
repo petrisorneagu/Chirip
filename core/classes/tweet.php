@@ -43,7 +43,6 @@ class Tweet extends User{
                 </div>';
 
             if(!empty($chirp->chirpImage)) {
-                echo 'eeee';
                 echo ' <div class="t-show-body" >
                     <div class="t-s-b-inner" >
                         <div class="t-s-b-inner-in" >
@@ -75,6 +74,16 @@ class Tweet extends User{
 
         }
     }
+
+    public function getTrendByHash($hashtag){
+        $stmt = $this->pdo->prepare("SELECT * FROM trends WHERE hashtag LIKE :hashtag");
+        $stmt->bindValue(':hashtag', $hashtag.'%');
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+
 
 }
 
