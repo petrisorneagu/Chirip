@@ -203,6 +203,8 @@ if(isset($_POST['chirp'])){
                         </div>
                         <div class="popupTweet"></div>
 
+                            <script type="text/javascript" src="assets/js/like.js"></script>
+
                     </div>
                 </div>
 

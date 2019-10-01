@@ -57,7 +57,7 @@ class Tweet extends User{
                     <ul>
                         <li><button><a href="#"><i class="fa fa-share" aria-hidden="true"></i></a></button></li>
                         <li><button><a href="#"><i class="fa fa-retweet" aria-hidden="true"></i></a></button></li>
-                        <li><button><a href="#"><i class="fa fa-heart-o" aria-hidden="true"></i></a></button></li>
+                        <li><button class="like-btn" data-tweet="'.$chirp->chirpId.'" data-user="'.$chirp->chirpBy.'"><a href="#"><i class="fa fa-heart-o" aria-hidden="true"></i></a><span class="likesCounter"></span></button></li>
                         <li>
                             <a href="#" class="more"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a>
                             <ul>
