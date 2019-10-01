@@ -7,13 +7,14 @@ class Tweet extends User{
         $this->pdo = $pdo;
     }
 
-    public function chirps(){
+    public function chirps($user_id){
         $stmt = $this->pdo->prepare("SELECT * FROM `chirps` , `users` WHERE `chirpBy` = `user_id`");
         $stmt->execute();
 
         $chirps = $stmt->fetchAll(PDO::FETCH_OBJ);
 
         foreach($chirps as $chirp){
+            $likes = $this->likes($user_id, $chirp->chirpId);
             echo '
 <div class="all-tweet">
     <div class="t-show-wrap">
@@ -57,7 +58,11 @@ class Tweet extends User{
                     <ul>
                         <li><button><a href="#"><i class="fa fa-share" aria-hidden="true"></i></a></button></li>
                         <li><button><a href="#"><i class="fa fa-retweet" aria-hidden="true"></i></a></button></li>
-                        <li><button class="like-btn" data-tweet="'.$chirp->chirpId.'" data-user="'.$chirp->chirpBy.'"><a href="#"><i class="fa fa-heart-o" aria-hidden="true"></i></a><span class="likesCounter"></span></button></li>
+                        <li>
+                        '.(($likes['likeOn'] === $chirp->chirpId)
+                    ? '<button class="un    like-btn" data-tweet="'.$chirp->chirpId.'" data-user="'.$chirp->chirpBy.'"><a href="#"><i class="fa fa-heart" aria-hidden="true"></i></a><span class="likesCounter">'.$chirp->likesCount.'</span></button>'
+                    : '<button class="like-btn" data-tweet="'.$chirp->chirpId.'" data-user="'.$chirp->chirpBy.'"><a href="#"><i class="fa fa-heart-o" aria-hidden="true"></i></a><span class="likesCounter">'.(($chirp->likesCount > 0) ? $chirp->likesCount : '' ).'</span></button>' ).'
+                        </li>
                         <li>
                             <a href="#" class="more"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a>
                             <ul>
@@ -123,6 +128,15 @@ class Tweet extends User{
         $stmt->execute();
 
         $this->create('likes', array('likeBy'=>$user_id, 'likeOn' => $tweet_id ));
+    }
+
+    public function likes($user_id, $tweet_id){
+        $stmt = $this->pdo->prepare("SELECT * FROM likes WHERE `likeBy` = :user_id AND `likeOn` = :tweet_id");
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->bindParam(':tweet_id', $$tweet_id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
 }

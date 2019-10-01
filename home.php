@@ -195,7 +195,7 @@ if(isset($_POST['chirp'])){
 
                         <div class="tweets">
 
-                            <?php $getFromT->chirps(); ?>
+                            <?php $getFromT->chirps($user_id); ?>
                         </div>
 
                         <div class="loading-div">
