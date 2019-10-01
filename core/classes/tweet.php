@@ -117,5 +117,13 @@ class Tweet extends User{
         return $chirp;
     }
 
+    public function addLike($user_id, $tweet_id, $get_id){
+        $stmt = $this->pdo->prepare("UPDATE `chirps` SET `likesCount` = `likesCount` +1 WHERE chirpId = :tweet_id");
+        $stmt->bindParam(':tweet_id', $tweet_id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $this->create('likes', array('likeBy'=>$user_id, 'likeOn' => $tweet_id ));
+    }
+
 }
 
