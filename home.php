@@ -201,9 +201,12 @@ if(isset($_POST['chirp'])){
                         <div class="loading-div">
                             <img id="loader" src="assets/images/loading.svg" style="display: none;"/>
                         </div>
-                        <div class="popupTweet"></div>
 
-                            <script type="text/javascript" src="assets/js/like.js"></script>
+                        <div class="popupTweet">
+                        </div>
+
+                        <script type="text/javascript" src="assets/js/retweet.js"></script>
+                        <script type="text/javascript" src="assets/js/like.js"></script>
 
                     </div>
                 </div>

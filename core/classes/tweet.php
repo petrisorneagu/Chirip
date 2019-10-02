@@ -52,12 +52,14 @@ class Tweet extends User{
                     </div >
                 </div >';
             }
+
+
             echo '</div>
             <div class="t-show-footer">
                 <div class="t-s-f-right">
                     <ul>
                         <li><button><a href="#"><i class="fa fa-share" aria-hidden="true"></i></a></button></li>
-                        <li><button><a href="#"><i class="fa fa-retweet" aria-hidden="true"></i></a></button></li>
+                        <li><button class="retweet" data-tweet="'.$chirp->chirpId.'" data-user="'.$chirp->chirpBy.'"><a href="#"><i class="fa fa-retweet" aria-hidden="true"></i></a><span class="retweetsCount"></span></button></li>
                         <li>
                         '.(($likes['likeOn'] === $chirp->chirpId)
                     ? '<button class="unlike-btn" data-tweet="'.$chirp->chirpId.'" data-user="'.$chirp->chirpBy.'"><a href="#"><i class="fa fa-heart" aria-hidden="true"></i></a><span class="likesCounter">'.$chirp->likesCount.'</span></button>'
@@ -122,30 +124,38 @@ class Tweet extends User{
         return $chirp;
     }
 
+    public function getPopUpTweet($tweet_id){
+        $stmt = $this->pdo->prepare("SELECT * FROM `chirps`, `users` WHERE `chirpId` = :chirpId AND `chirpBy` = `user_id`");
+        $stmt->bindParam(':chirpId', $tweet_id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_OBJ);
+    }
+
     public function addLike($user_id, $tweet_id, $get_id){
-        $stmt = $this->pdo->prepare("UPDATE `chirps` SET `likesCount` = `likesCount` +1 WHERE chirpId = :tweet_id");
-        $stmt->bindParam(':tweet_id', $tweet_id, PDO::PARAM_INT);
+        $stmt = $this->pdo->prepare("UPDATE `chirps` SET `likesCount` = `likesCount` +1 WHERE chirpId = :chirpId");
+        $stmt->bindParam(':chirpId', $tweet_id, PDO::PARAM_INT);
         $stmt->execute();
 
         $this->create('likes', array('likeBy'=>$user_id, 'likeOn' => $tweet_id ));
     }
 
     public function unlike($user_id, $tweet_id, $get_id){
-        $stmt = $this->pdo->prepare("UPDATE `chirps` SET `likesCount` = `likesCount` -1 WHERE `chirpId` = :tweet_id");
-        $stmt->bindParam(':tweet_id', $tweet_id, PDO::PARAM_INT);
+        $stmt = $this->pdo->prepare("UPDATE `chirps` SET `likesCount` = `likesCount` -1 WHERE `chirpId` = :chirpId");
+        $stmt->bindParam(':chirpId', $tweet_id, PDO::PARAM_INT);
         $stmt->execute();
 
-        $stmt = $this->pdo->prepare("DELETE FROM `likes` WHERE `likeBy` = :user_id AND `likeOn` = :tweet_id");
+        $stmt = $this->pdo->prepare("DELETE FROM `likes` WHERE `likeBy` = :user_id AND `likeOn` = :chirpId");
         $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-        $stmt->bindParam(':tweet_id', $tweet_id, PDO::PARAM_INT);
+        $stmt->bindParam(':chirpId', $tweet_id, PDO::PARAM_INT);
         $stmt->execute();
 
     }
 
     public function likes($user_id, $tweet_id){
-        $stmt = $this->pdo->prepare("SELECT * FROM likes WHERE `likeBy` = :user_id AND `likeOn` = :tweet_id");
+        $stmt = $this->pdo->prepare("SELECT * FROM likes WHERE `likeBy` = :user_id AND `likeOn` = :chirpId");
         $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-        $stmt->bindParam(':tweet_id', $tweet_id, PDO::PARAM_INT);
+        $stmt->bindParam(':chirpId', $tweet_id, PDO::PARAM_INT);
         $stmt->execute();
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
