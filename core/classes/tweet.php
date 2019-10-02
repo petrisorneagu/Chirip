@@ -60,7 +60,7 @@ class Tweet extends User{
                         <li><button><a href="#"><i class="fa fa-retweet" aria-hidden="true"></i></a></button></li>
                         <li>
                         '.(($likes['likeOn'] === $chirp->chirpId)
-                    ? '<button class="un    like-btn" data-tweet="'.$chirp->chirpId.'" data-user="'.$chirp->chirpBy.'"><a href="#"><i class="fa fa-heart" aria-hidden="true"></i></a><span class="likesCounter">'.$chirp->likesCount.'</span></button>'
+                    ? '<button class="unlike-btn" data-tweet="'.$chirp->chirpId.'" data-user="'.$chirp->chirpBy.'"><a href="#"><i class="fa fa-heart" aria-hidden="true"></i></a><span class="likesCounter">'.$chirp->likesCount.'</span></button>'
                     : '<button class="like-btn" data-tweet="'.$chirp->chirpId.'" data-user="'.$chirp->chirpBy.'"><a href="#"><i class="fa fa-heart-o" aria-hidden="true"></i></a><span class="likesCounter">'.(($chirp->likesCount > 0) ? $chirp->likesCount : '' ).'</span></button>' ).'
                         </li>
                         <li>
@@ -130,10 +130,22 @@ class Tweet extends User{
         $this->create('likes', array('likeBy'=>$user_id, 'likeOn' => $tweet_id ));
     }
 
+    public function unlike($user_id, $tweet_id, $get_id){
+        $stmt = $this->pdo->prepare("UPDATE `chirps` SET `likesCount` = `likesCount` -1 WHERE `chirpId` = :tweet_id");
+        $stmt->bindParam(':tweet_id', $tweet_id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $stmt = $this->pdo->prepare("DELETE FROM `likes` WHERE `likeBy` = :user_id AND `likeOn` = :tweet_id");
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->bindParam(':tweet_id', $tweet_id, PDO::PARAM_INT);
+        $stmt->execute();
+
+    }
+
     public function likes($user_id, $tweet_id){
         $stmt = $this->pdo->prepare("SELECT * FROM likes WHERE `likeBy` = :user_id AND `likeOn` = :tweet_id");
         $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-        $stmt->bindParam(':tweet_id', $$tweet_id, PDO::PARAM_INT);
+        $stmt->bindParam(':tweet_id', $tweet_id, PDO::PARAM_INT);
         $stmt->execute();
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
