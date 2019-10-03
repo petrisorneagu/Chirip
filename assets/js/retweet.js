@@ -1,14 +1,14 @@
 $(function () {
     $(document).on('click', '.retweet', function(){
-        var tweet_id = $(this).data('tweet');
-        var user_id = $(this).data('user');
-        var counter = $(this).find('.retweetsCount');
-        var count = counter.text();
-        button = $(this);
+        $tweet_id = $(this).data('tweet');
+        $user_id = $(this).data('user');
+        $counter = $(this).find('.retweetsCount');
+        $count = $counter.text();
+        $button = $(this);
 
         $.post('http://dev.test.com/Chirip/core/ajax/retweet.php',
-            {showPopup: tweet_id,
-                user_id: user_id
+            {showPopup: $tweet_id,
+                user_id: $user_id
             },
             function(data){
                 $('.popupTweet').html(data);
@@ -20,4 +20,18 @@ $(function () {
             }
         );
     });
+
+    $(document).on('click', '.retweet-it', function () {
+        var comment = $('.retweetMsg').val();
+        $.post('http://dev.test.com/Chirip/core/ajax/retweet.php',
+            {retweet: $tweet_id,
+                user_id: $user_id,
+                comment: comment},
+            function () {
+                $('.retweet-popup').hide();
+                $count++;
+                $counter.text($count);
+                $button.removeClass('retweet').addClass('retweeted');
+            })
+    })
 });
