@@ -13,7 +13,7 @@ $(function(){
                 counter.show();
                 button.addClass('unlike-btn');
                 button.removeClass('like-btn');
-                count++;
+                // count++;
                 counter.text(count);
                 button.find('.fa-heart-o').addClass('fa-heart');
                 button.find('.fa-heart').removeClass('fa-heart-o');
