@@ -124,6 +124,10 @@ class Tweet extends User{
         return $chirp;
     }
 
+    /**
+     * @param $tweet_id
+     * @return mixed
+     */
     public function getPopUpTweet($tweet_id){
         $stmt = $this->pdo->prepare("SELECT * FROM `chirps`, `users` WHERE `chirpId` = :chirpId AND `chirpBy` = `user_id`");
         $stmt->bindParam(':chirpId', $tweet_id, PDO::PARAM_INT);
@@ -132,8 +136,28 @@ class Tweet extends User{
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
 
+    /**
+     * @param $tweet_id
+     * @param $user_id
+     * @param $get_id
+     * @param $comment
+     */
+    public function retweet($tweet_id,$user_id,$get_id,$comment){
+        $stmt = $this->pdo->prepare("UPDATE `chirps` SET `rechirpCount` = `rechirpCount` + 1 WHERE `chirpId` = :chirpId");
+        $stmt->bindParam(':chirpId', $tweet_id, PDO::PARAM_INT);
+        $stmt->execute();
+
+//        in case of duplicate
+        $stmt = $this->pdo->prepare("INSERT INTO chirps (`status`,`chirpBy`,`rechirpId`,`rechirpBy`,`chirpImage`,`postedOn`,`likesCount`,`rechirpCount`,`rechirpMsg`) SELECT `status`,`chirpBy`,`chirpImage`,`chirpId`, :user_id, CURRENT_TIMESTAMP,`likesCount`,`rechirpCount`,:rechirpMsg FROM `chirps` WHERE `chirpId` = :chirp_id") ;
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->bindParam(':rechirpMsg', $comment, PDO::PARAM_STR);
+        $stmt->bindParam(':chirp_id', $tweet_id, PDO::PARAM_INT);
+
+        $stmt->execute();
+    }
+
     public function addLike($user_id, $tweet_id, $get_id){
-        $stmt = $this->pdo->prepare("UPDATE `chirps` SET `likesCount` = `likesCount` +1 WHERE chirpId = :chirpId");
+        $stmt = $this->pdo->prepare("UPDATE `chirps` SET `likesCount` = `likesCount` + 1 WHERE chirpId = :chirpId");
         $stmt->bindParam(':chirpId', $tweet_id, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -141,7 +165,7 @@ class Tweet extends User{
     }
 
     public function unlike($user_id, $tweet_id, $get_id){
-        $stmt = $this->pdo->prepare("UPDATE `chirps` SET `likesCount` = `likesCount` -1 WHERE `chirpId` = :chirpId");
+        $stmt = $this->pdo->prepare("UPDATE `chirps` SET `likesCount` = `likesCount` - 1 WHERE `chirpId` = :chirpId");
         $stmt->bindParam(':chirpId', $tweet_id, PDO::PARAM_INT);
         $stmt->execute();
 
