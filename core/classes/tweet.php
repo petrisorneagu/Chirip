@@ -13,19 +13,26 @@ class Tweet extends User{
 
         $chirps = $stmt->fetchAll(PDO::FETCH_OBJ);
 
-        foreach($chirps as $chirp){
+        foreach($chirps as  $chirp){
             $likes = $this->likes($user_id, $chirp->chirpId);
+            $retweet = $this->checkRetweet($chirp->chirpId, $user_id);
+            $user = $this->userData($chirp->rechirpBy);
+
             echo '
 <div class="all-tweet">
     <div class="t-show-wrap">
         <div class="t-show-inner">
-            <!-- this div is for retweet icon
+        
+        '.(($retweet['rechirpId'] === $chirp->rechirpId || $chirp->rechirpId > 0)  ? '
             <div class="t-show-banner">
                 <div class="t-show-banner-inner">
-                    <span><i class="fa fa-retweet" aria-hidden="true"></i></span><span>Screen-Name Retweeted</span>
+                    <span><i class="fa fa-retweet" aria-hidden="true"></i></span><span>'.$user->screenName.' Retweeted</span>
                 </div>
             </div>
-            -->
+            
+            ' : '' ).'
+            
+            
             <div class="t-show-popup">
                 <div class="t-show-head">
                     <div class="t-show-img">
@@ -59,7 +66,12 @@ class Tweet extends User{
                 <div class="t-s-f-right">
                     <ul>
                         <li><button><a href="#"><i class="fa fa-share" aria-hidden="true"></i></a></button></li>
-                        <li><button class="retweet" data-tweet="'.$chirp->chirpId.'" data-user="'.$chirp->chirpBy.'"><a href="#"><i class="fa fa-retweet" aria-hidden="true"></i></a><span class="retweetsCount"></span></button></li>
+                        
+                        <li>'.(($chirp->chirpId) === $retweet['rechirpId']
+                ? '<button class="retweeted" data-tweet="'.$chirp->chirpId.'" data-user="'.$chirp->chirpBy.'"><a href="#"><i class="fa fa-retweet" aria-hidden="true"></i></a><span class="retweetsCount">'.$chirp->rechirpCount.'</span></button>'
+                : '<button class="retweeted" data-tweet="'.$chirp->chirpId.'" data-user="'.$chirp->chirpBy.'"><a href="#"><i class="fa fa-retweet" aria-hidden="true"></i></a><span class="retweetsCount">'.(($chirp->rechirpCount > 0) ? $chirp->rechirpCount :'').'</span></button>').'
+                        </li>
+                       
                         <li>
                         '.(($likes['likeOn'] === $chirp->chirpId)
                     ? '<button class="unlike-btn" data-tweet="'.$chirp->chirpId.'" data-user="'.$chirp->chirpBy.'"><a href="#"><i class="fa fa-heart" aria-hidden="true"></i></a><span class="likesCounter">'.$chirp->likesCount.'</span></button>'
@@ -154,6 +166,16 @@ class Tweet extends User{
         $stmt->bindParam(':chirp_id', $tweet_id, PDO::PARAM_INT);
 
         $stmt->execute();
+    }
+
+    public function checkRetweet($tweet_id, $user_id){
+        $stmt = $this->pdo->prepare("SELECT * FROM `chirps` WHERE `rechirpId` = :tweet_id AND `rechirpBy` = :user_id OR `chirpId` = :tweet_id");
+        $stmt->bindParam(':tweet_id', $tweet_id, PDO::PARAM_INT);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+
     }
 
     public function addLike($user_id, $tweet_id, $get_id){

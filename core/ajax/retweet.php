@@ -55,7 +55,7 @@ if(isset($_POST['showPopup']) && !empty($_POST['showPopup'])){
                 </div>
             </div>
         </div>
-    </div><!-- Retweet PopUp ends-->
+    </div>
 
 
     <?php
