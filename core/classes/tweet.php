@@ -7,10 +7,13 @@ class Tweet extends User{
         $this->pdo = $pdo;
     }
 
-    public function chirps($user_id){
-        $stmt = $this->pdo->prepare("SELECT * FROM `chirps` , `users` WHERE `chirpBy` = `user_id`");
-        $stmt->execute();
 
+//    this is a mess...I should include some files  :((
+    public function chirps($user_id){
+        $stmt = $this->pdo->prepare("SELECT * FROM `chirps` LEFT JOIN  `users` ON `chirpBy` = `user_id` WHERE `chirpBy` = :user_id AND `rechirpId` = 0  OR `chirpBy` = `user_id` AND `rechirpBy` != :user_id");
+
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
         $chirps = $stmt->fetchAll(PDO::FETCH_OBJ);
 
         foreach($chirps as  $chirp){
@@ -31,7 +34,48 @@ class Tweet extends User{
             </div>
             
             ' : '' ).'
-            
+        
+        '.((!empty($chirp->rechirpMsg) && $chirp->chirpId === $retweet['rechirpId'] || $chirp->rechirpId > 0 ) ? '
+        
+        <div class="t-show-head">
+	<div class="t-show-img">
+		<img src="'.BASE_URL.$user->profileImage. '"/>
+	</div>
+	<div class="t-s-head-content">
+		<div class="t-h-c-name">
+			<span><a href="'.BASE_URL.$user->screenName.'">'.$user->screenName.'</a></span>
+			<span>@'.$user->username.'</span>
+			<span>'.$this->getChirpLinks($retweet['postedOn']).'</span>
+		</div>
+		<div class="t-h-c-dis">
+			'.$chirp->rechirpMsg.'
+		</div>
+	</div>
+</div>
+<div class="t-s-b-inner">
+	<div class="t-s-b-inner-in">
+		<div class="retweet-t-s-b-inner">
+		
+		'.((!empty($chirp->chirpImage)) ? '
+			<div class="retweet-t-s-b-inner-left">
+				<img src="'.BASE_URL.$chirp->chirpImage.'"/>	
+			</div>
+			' : '').'
+			
+			<div class="retweet-t-s-b-inner-right">
+				<div class="t-h-c-name">
+					<span><a href="'.BASE_URL.$chirp->username.'">'.$chirp->screenName.'</a></span>
+					<span>@'.$chirp->username.'</span>
+					<span>'.$chirp->username.'</span>
+				</div>
+				<div class="retweet-t-s-b-inner-right-text">		
+					'.$chirp->status.'
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+        ' : '
             
             <div class="t-show-popup">
                 <div class="t-show-head">
@@ -48,20 +92,22 @@ class Tweet extends User{
                             '.$this->getChirpLinks($chirp->status).'
                         </div>
                     </div>
-                </div>';
+                </div>'.
 
-            if(!empty($chirp->chirpImage)) {
-                echo ' <div class="t-show-body" >
+            ((!empty($chirp->chirpImage)) ?
+                 ' <div class="t-show-body" >
                     <div class="t-s-b-inner" >
                         <div class="t-s-b-inner-in" >
                             <img src = "'.$chirp->chirpImage.'" class="imagePopup" />
                         </div >
                     </div >
-                </div >';
-            }
-
-
-            echo '</div>
+                </div >
+                    ' : '').'
+                
+               
+          </div>
+          
+          ').'
             <div class="t-show-footer">
                 <div class="t-s-f-right">
                     <ul>
